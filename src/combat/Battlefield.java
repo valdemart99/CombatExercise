@@ -5,58 +5,67 @@ import java.util.*;
 import characters.*;
 
 public class Battlefield {
-	private List<Fighter> sideA;
-	private List<Fighter> sideB;
+	private List<Fighter> humans; 
+	private List<Fighter> trolls;
 	private int roundCounter;
-	private List<Integer> toRemove;
 	
 	public Battlefield(List<Fighter> sideA, List<Fighter> sideB) {
-		this.sideA = sideA;
-		this.sideB = sideB;
+		if (sideA.get(0).getRace().equals("troll")) {
+			this.humans = sideB;
+			this.trolls = sideA;
+		} else {
+			this.humans = sideA;
+			this.trolls = sideB;
+		}
 		this.roundCounter = 0;
 	}
 	
 	public void performRound() {
-		CombatRound thisRound = new CombatRound(sideA, sideB);
-		thisRound.setVersusList();
-		thisRound.resolveRound();
-		updateFighters(sideA);
-		updateFighters(sideB);
+		int duelCount = humans.size() >= trolls.size() ? trolls.size() : humans.size();
+		
+		for (int i = 0; i < duelCount - 1; ++i) {
+			changeLifeValue(trolls.get(i), humans.get(i));
+		}
+		
+		for (int j = duelCount - 1; j > -1; j--) {
+			removeFallen(j);
+		}
+		roundCounter++;
 	}
 	
-	private void updateFighters(List<Fighter> fighters) {
-		int index = 0;
-		for (Fighter f: fighters) {
-			if (f.getLife() <= 0) {
-				toRemove.add(index++);
-			}
+	private void changeLifeValue(Fighter attacker, Fighter defender) {
+		defender.changeLife( - attacker.getPower());
+		if (defender.getLife() > 0) {
+			attacker.changeLife( - defender.getPower());
+		}
+	}
+	
+	private void removeFallen(int index) {
+		if (humans.get(index).getLife() <= 0 ) {
+			humans.remove(index);
+		}
+		
+		if (trolls.get(index).getLife() <= 0 ) {
+			trolls.remove(index);
 		}
 	}
 	
 	public String determineWinner() {
-		if (sideA.size() == 0) {
-			return "SideA";
-		} else if (sideB.size() == 0) {
-			return "SideB";
+		if (humans.isEmpty()) {
+			return "humans";
+		} else if (trolls.isEmpty()) {
+			return "trolls";
 		} else {
 			return "continue";
 		}
 	}
 
-	public List<Fighter> getSideA() {
-		return sideA;
+	public List<Fighter> getHumans() {
+		return humans;
 	}
 
-	public void setSideA(List<Fighter> sideA) {
-		this.sideA = sideA;
-	}
-
-	public List<Fighter> getSideB() {
-		return sideB;
-	}
-
-	public void setSideB(List<Fighter> sideB) {
-		this.sideB = sideB;
+	public List<Fighter> getTrolls() {
+		return trolls;
 	}
 
 	public int getRoundCounter() {

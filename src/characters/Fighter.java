@@ -30,7 +30,7 @@ public class Fighter {
 	}
 
 	public void changeLife(int life) {
-		this.life -= life;
+		this.life += life;
 	}
 
 	public int getId() {

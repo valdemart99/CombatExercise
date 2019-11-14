@@ -35,8 +35,9 @@ public class Proba {
 		
 		Battlefield battle = new Battlefield(edno, dve);
 		
-		while (!battle.determineWinner().equals("SideA") && !battle.determineWinner().equals("SideB")) {
+		while (!battle.determineWinner().equals("humans") && !battle.determineWinner().equals("trolls")) {
 			battle.performRound();
+			System.out.println(battle.getRoundCounter());
 		}
 	}
 }
